@@ -2,21 +2,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 public class ClienteTCP {
-    private static final InetAddress SERVIDOR_IP;
-
-    static {
-        try {
-            SERVIDOR_IP = InetAddress.getByName("172.16.255.223");
-        } catch (UnknownHostException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
+    private static final String SERVIDOR_IP = "172.16.255.222";
     private static final int SERVIDOR_PUERTO = 8080;
 
     private Socket socket;
