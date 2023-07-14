@@ -5,7 +5,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class ClienteTCP {
-    private static final String SERVIDOR_IP = "172.16.255.222";
+    private static final String SERVIDOR_IP = "172.16.255.223";
     private static final int SERVIDOR_PUERTO = 8080;
 
     private Socket socket;
