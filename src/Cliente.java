@@ -1,3 +1,4 @@
+/*
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -77,4 +78,4 @@ public class Cliente extends Thread {
     public boolean estaSuscrito(String topico) {
         return topicos.contains(topico);
     }
-}
+}*/
