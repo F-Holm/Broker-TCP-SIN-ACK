@@ -11,7 +11,7 @@ public class ClienteTCP {
 
     static {
         try {
-            SERVIDOR_IP = InetAddress.getByName("172.16.255.222");
+            SERVIDOR_IP = InetAddress.getByName("172.16.255.223");
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         }
