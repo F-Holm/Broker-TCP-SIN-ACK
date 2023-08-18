@@ -136,9 +136,7 @@ class ClienteHilo extends Thread {
                         }
                         ServidorBroker.quitarCliente(this);
                         enviarMensaje("Servidor", "Te has desconectado");
-                        entrada.close();
-                        salida.close();
-                        socket.close();
+                        finalizarHilo();
                         return;
                     default:
                         ServidorBroker.enviarMensaje(partes[0], partes[1], this);
