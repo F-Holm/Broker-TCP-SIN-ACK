@@ -29,6 +29,7 @@ public class ServidorBroker {
             for (ClienteHilo cliente : suscriptores) {
                 if (!cliente.equals(remitente)) {
                     cliente.enviarMensaje(topico, mensaje);
+                    /**/System.out.println("Mensaje enviado");
                 }
             }
         }
@@ -36,9 +37,13 @@ public class ServidorBroker {
 
     static synchronized void agregarSuscriptor(String topico, ClienteHilo cliente) {
         topicos.computeIfAbsent(topico, k -> new HashSet<>()).add(cliente);
+        /**/for (ClienteHilo clienteHilo: topicos.get(topico)){
+            System.out.println("Clientes");
+        }/**/
     }
 
     static synchronized void quitarSuscriptor(String topico, ClienteHilo cliente) {
+        /**/System.out.println("Entro en el metodo quitarSuscriptor");
         HashSet<ClienteHilo> suscriptores = topicos.get(topico);
         if (suscriptores != null) {
             suscriptores.remove(cliente);
@@ -98,7 +103,9 @@ class ClienteHilo extends Thread {
                         socket.close();
                         return;
                     default:
+                        /**/System.out.println(topico + ": " + contenido);
                         ServidorBroker.enviarMensaje(topico, contenido, this);
+                        /**/System.out.println(topico + ": " + contenido);
                         break;
                 }
             }
