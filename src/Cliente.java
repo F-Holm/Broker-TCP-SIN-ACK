@@ -1,10 +1,13 @@
-import java.io.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.Scanner;
 
 public class Cliente {
     public static void main(String[] args) {
-        final String SERVIDOR = "192.168.0.10";
+        final String SERVIDOR = "192.168.0.17";
         final int PUERTO = 12345;
 
         try {
