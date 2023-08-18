@@ -1,6 +1,11 @@
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.HashMap;
+import java.util.HashSet;
 
 public class ServidorBroker {
     private static final int PUERTO = 12345;
@@ -29,7 +34,6 @@ public class ServidorBroker {
             for (ClienteHilo cliente : suscriptores) {
                 if (!cliente.equals(remitente)) {
                     cliente.enviarMensaje(topico, mensaje);
-                    /**/System.out.println("Mensaje enviado");
                 }
             }
         }
@@ -37,13 +41,9 @@ public class ServidorBroker {
 
     static synchronized void agregarSuscriptor(String topico, ClienteHilo cliente) {
         topicos.computeIfAbsent(topico, k -> new HashSet<>()).add(cliente);
-        /**/for (ClienteHilo clienteHilo: topicos.get(topico)){
-            System.out.println("Clientes");
-        }/**/
     }
 
     static synchronized void quitarSuscriptor(String topico, ClienteHilo cliente) {
-        /**/System.out.println("Entro en el metodo quitarSuscriptor");
         HashSet<ClienteHilo> suscriptores = topicos.get(topico);
         if (suscriptores != null) {
             suscriptores.remove(cliente);
@@ -79,18 +79,16 @@ class ClienteHilo extends Thread {
             String mensaje;
             while ((mensaje = entrada.readLine()) != null) {
                 String[] partes = mensaje.split(":");
-                String accion = partes[0];
-                String topico = partes[1];
                 String contenido = partes.length > 2 ? partes[2] : "";
 
-                switch (accion) {
+                switch (partes[0]) {
                     case "SUB":
-                        ServidorBroker.agregarSuscriptor(topico, this);
-                        enviarMensaje("Servidor", "Te has suscrito al tópico " + topico);
+                        ServidorBroker.agregarSuscriptor(partes[1], this);
+                        enviarMensaje("Servidor", "Te has suscrito al tópico " + partes[1]);
                         break;
                     case "DESUB":
-                        ServidorBroker.quitarSuscriptor(topico, this);
-                        enviarMensaje("Servidor", "Te has desuscrito del tópico " + topico);
+                        ServidorBroker.quitarSuscriptor(partes[1], this);
+                        enviarMensaje("Servidor", "Te has desuscrito del tópico " + partes[1]);
                         break;
                     case "DEL":
                         for (HashSet<ClienteHilo> suscriptores : ServidorBroker.topicos.values()) {
@@ -103,9 +101,7 @@ class ClienteHilo extends Thread {
                         socket.close();
                         return;
                     default:
-                        /**/System.out.println(accion + ": " + topico);
-                        ServidorBroker.enviarMensaje(accion, topico, this);
-                        /**/System.out.println(accion + ": " + topico);
+                        ServidorBroker.enviarMensaje(partes[0], partes[1], this);
                         break;
                 }
             }
