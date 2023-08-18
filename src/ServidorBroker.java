@@ -103,9 +103,9 @@ class ClienteHilo extends Thread {
                         socket.close();
                         return;
                     default:
-                        /**/System.out.println(topico + ": " + contenido);
-                        ServidorBroker.enviarMensaje(topico, contenido, this);
-                        /**/System.out.println(topico + ": " + contenido);
+                        /**/System.out.println(accion + ": " + topico);
+                        ServidorBroker.enviarMensaje(accion, topico, this);
+                        /**/System.out.println(accion + ": " + topico);
                         break;
                 }
             }
