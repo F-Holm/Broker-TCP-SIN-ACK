@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class Cliente {
     public static void main(String[] args) {
-        final String SERVIDOR = "172.16.255.164";
+        final String SERVIDOR = "192.168.0.10";
         final int PUERTO = 12345;
 
         try {
