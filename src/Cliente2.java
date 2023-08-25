@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
+
 public class Cliente2 {
     public static boolean servidorActivo = true;
     public static void main(String[] args) {
