@@ -45,7 +45,9 @@ class ClienteHilo extends Thread {
         try {
             Mensaje mensaje;
             boolean primero = true;
-            while (hiloActivo && (mensaje = (Mensaje) entrada.readObject()) != null) {
+            while (hiloActivo) {
+                mensaje = (Mensaje) entrada.readObject();
+                if (recibirMensaje(mensaje).equals("")) break;
                 if (primero){
                     primero = false;
                     clavePublica = RSAySHA.base64ClavePublica(mensaje.getMensajeEncriptado());

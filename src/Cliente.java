@@ -61,7 +61,8 @@ public class Cliente {
                             servidorActivo = false;
                             break;
                         }
-                        System.out.println(recibirMensaje(mensaje));
+                        String mensaje_ = recibirMensaje(mensaje);
+                        if (!mensaje_.equals("")) System.out.println(mensaje_);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
