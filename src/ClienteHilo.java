@@ -9,7 +9,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.HashSet;
 
-class ClienteHilo extends Thread {
+public class ClienteHilo extends Thread {
     private Socket socket;
     private ObjectInputStream entrada;
     private ObjectOutputStream salida;
@@ -45,14 +45,17 @@ class ClienteHilo extends Thread {
         try {
             Mensaje mensaje;
             boolean primero = true;
+            enviarClave();
             while (hiloActivo) {
                 mensaje = (Mensaje) entrada.readObject();
-                if (recibirMensaje(mensaje).equals("")) break;
+                if (mensaje == null) continue;
                 if (primero){
                     primero = false;
-                    clavePublica = RSAySHA.base64ClavePublica(mensaje.getMensajeEncriptado());
+                    clavePublica = RSAySHA.base64ClavePublica(mensaje.getClavePublica());
+                    System.out.println(clavePublica);
                     continue;
                 }
+                if (recibirMensaje(mensaje).equals("")) break;
                 String[] partes = recibirMensaje(mensaje).split(":");
                 switch (partes[0]) {
                     case "SUB":
@@ -86,11 +89,15 @@ class ClienteHilo extends Thread {
             throw new RuntimeException(e);
         }
     }
+
+    public void enviarClave() throws IOException {
+        salida.writeObject(new Mensaje(RSAySHA.clavePublicaBase64(ServidorBroker.clavePublica)));
+    }
     public void enviarMensaje(String topico, String mensaje) throws IOException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         if (!(mensaje.equals("CERRAR_SERVIDOR") && topico.equals("Servidor"))) {
             mensaje = topico + ": " + mensaje;
         }
-        String mensajeHasheadoEncriptado = RSAySHA.desEncriptarPrivadaRSA(RSAySHA.hashearMensaje(mensaje), ServidorBroker.clavePrivada);
+        String mensajeHasheadoEncriptado = RSAySHA.encriptarPrivadaRSA(RSAySHA.hashearMensaje(mensaje), ServidorBroker.clavePrivada);
         String mensajeEncriptado = RSAySHA.encriptarPublicaRSA(mensaje, clavePublica);
         salida.writeObject(new Mensaje(mensajeHasheadoEncriptado, mensajeEncriptado));
     }

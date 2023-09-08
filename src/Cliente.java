@@ -48,7 +48,8 @@ public class Cliente {
                         mensaje = (Mensaje) entrada.readObject();
                         if (primera){
                             primera = false;
-                            clavePublicaServer = RSAySHA.base64ClavePublica(mensaje.getMensajeEncriptado());
+                            clavePublicaServer = RSAySHA.base64ClavePublica(mensaje.getClavePublica());
+                            System.out.println(clavePublicaServer);
                             continue;
                         }
                         if (mensaje == null) {
@@ -106,6 +107,7 @@ public class Cliente {
                     return;
                 }
 
+
                 switch (opcion) {
                     case 1:
                         System.out.println("Ingresa el nombre del tópico al que te quieres suscribir:");
@@ -125,7 +127,7 @@ public class Cliente {
                         enviarMensaje(topicoMensaje + ":" + contenidoMensaje, salida);
                         break;
                     case 4:
-                        enviarMensaje("DEL:", salida);
+                        enviarMensaje("DEL:DEL", salida);
                         receptor.join();
                         return;
                     default:

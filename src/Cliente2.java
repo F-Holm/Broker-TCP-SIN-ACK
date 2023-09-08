@@ -48,7 +48,7 @@ public class Cliente2 {
                         mensaje = (Mensaje) entrada.readObject();
                         if (primera){
                             primera = false;
-                            clavePublicaServer = RSAySHA.base64ClavePublica(mensaje.getMensajeEncriptado());
+                            clavePublicaServer = RSAySHA.base64ClavePublica(mensaje.getClavePublica());
                             continue;
                         }
                         if (mensaje == null) {
@@ -91,6 +91,7 @@ public class Cliente2 {
             receptor.start();
 
             salida.writeObject(new Mensaje(RSAySHA.clavePublicaBase64(clavePublica)));
+            while (clavePublicaServer == null);
 
             while (true) {
                 System.out.println("Elige una acción:");
@@ -105,6 +106,7 @@ public class Cliente2 {
                     receptor.join();
                     return;
                 }
+
 
                 switch (opcion) {
                     case 1:
@@ -125,7 +127,7 @@ public class Cliente2 {
                         enviarMensaje(topicoMensaje + ":" + contenidoMensaje, salida);
                         break;
                     case 4:
-                        enviarMensaje("DEL:", salida);
+                        enviarMensaje("DEL:DEL", salida);
                         receptor.join();
                         return;
                     default:

@@ -9,11 +9,14 @@ public class Mensaje implements Serializable {
         this.mensajeEncriptado = mensajeEncriptado;
     }
     public Mensaje(String clavePublica) {
-        this.mensajeHasheadoEncriptado = "";
+        this.mensajeHasheadoEncriptado = null;
         this.mensajeEncriptado = clavePublica;
     }
 
     public String getMensajeHasheadoEncriptado() {
+        return mensajeHasheadoEncriptado;
+    }
+    public String getClavePublica() {
         return mensajeHasheadoEncriptado;
     }
 

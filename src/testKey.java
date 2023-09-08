@@ -15,5 +15,6 @@ public class testKey {
         String clavePublicaSTR = RSAySHA.clavePublicaBase64(keypair.getPublic());
         PublicKey clavePublica = RSAySHA.base64ClavePublica(clavePublicaSTR);
         System.out.println(RSAySHA.desEncriptarPublicaRSA(mensajeEncriptado, clavePublica));
+        System.out.println(keypair.getPublic());
     }
 }
