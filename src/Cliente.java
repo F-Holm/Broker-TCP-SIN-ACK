@@ -12,7 +12,7 @@ public class Cliente {
     public static final String SERVIDOR = "127.0.0.1";
     public static final int PUERTO = 12345;
     public static PrivateKey clavePrivada = null;
-    public static PublicKey clsavePublica = null;
+    public static PublicKey clavePublica = null;
     public static void enviarMensaje(String mensaje, PrintWriter salida) throws NoSuchAlgorithmException, NoSuchPaddingException, IOException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
         String mensajeHasheadoEncriptado = RSAySHA.encriptarPrivadaRSA(RSAySHA.hashearMensaje(mensaje), clavePrivada);
         String mensajeEncriptado = RSAySHA.encriptarPublicaRSA(mensaje, clavePublicaServer);
