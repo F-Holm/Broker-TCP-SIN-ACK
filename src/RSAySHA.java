@@ -10,6 +10,8 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
 public class RSAySHA {
+    public final static String delimitador = "EsteEsUnCaracterDelimitador";
+    public final static String delimitadorCodificado = Base64.getEncoder().encodeToString(delimitador.getBytes());
     public static String encriptarPrivadaRSA(String mensaje, PrivateKey clavePrivada) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException {
         Cipher rsaCipher = Cipher.getInstance("RSA");
         rsaCipher.init(Cipher.ENCRYPT_MODE, clavePrivada);

@@ -13,14 +13,15 @@ public class Cliente2 {
     public static final int PUERTO = 12345;
     public static PrivateKey clavePrivada = null;
     public static PublicKey clavePublica = null;
-    public static void enviarMensaje(String mensaje, ObjectOutputStream salida) throws NoSuchAlgorithmException, NoSuchPaddingException, IOException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
-        String mensajeHasheadoEncriptado = RSAySHA.desEncriptarPrivadaRSA(RSAySHA.hashearMensaje(mensaje), clavePrivada);
+    public static void enviarMensaje(String mensaje, PrintWriter salida) throws NoSuchAlgorithmException, NoSuchPaddingException, IOException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
+        String mensajeHasheadoEncriptado = RSAySHA.encriptarPrivadaRSA(RSAySHA.hashearMensaje(mensaje), clavePrivada);
         String mensajeEncriptado = RSAySHA.encriptarPublicaRSA(mensaje, clavePublicaServer);
-        salida.writeObject(new Mensaje(mensajeHasheadoEncriptado, mensajeEncriptado));
+        salida.println(mensajeHasheadoEncriptado + RSAySHA.delimitadorCodificado + mensajeEncriptado);
     }
-    public static String recibirMensaje(Mensaje mensaje) throws NoSuchPaddingException, UnsupportedEncodingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
-        String mensajeSTR = RSAySHA.desEncriptarPrivadaRSA(mensaje.getMensajeEncriptado(), clavePrivada);
-        if (RSAySHA.desEncriptarPublicaRSA(mensaje.getMensajeHasheadoEncriptado(), clavePublicaServer).equals(RSAySHA.hashearMensaje(mensajeSTR)))
+    public static String recibirMensaje(String mensaje) throws NoSuchPaddingException, UnsupportedEncodingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+        String[] partes = mensaje.split(RSAySHA.delimitadorCodificado);
+        String mensajeSTR = RSAySHA.desEncriptarPrivadaRSA(partes[1], clavePrivada);
+        if (RSAySHA.desEncriptarPublicaRSA(partes[0], clavePublicaServer).equals(RSAySHA.hashearMensaje(mensajeSTR)))
             return mensajeSTR;
         return "";
     }
@@ -34,24 +35,25 @@ public class Cliente2 {
 
         try {
             Socket socket = new Socket(SERVIDOR, PUERTO);
-            ObjectOutputStream salida = new ObjectOutputStream(socket.getOutputStream());
-            ObjectInputStream entrada = new ObjectInputStream(socket.getInputStream());
+            PrintWriter salida = new PrintWriter(socket.getOutputStream(), true);
+            BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             Scanner scanner = new Scanner(System.in);
 
             System.out.println("Cliente conectado al servidor en " + SERVIDOR + ":" + PUERTO);
 
             Thread receptor = new Thread(() -> {
                 try {
-                    Mensaje mensaje;
+                    String mensaje;
                     boolean primera = true;
                     while (true) {
-                        mensaje = (Mensaje) entrada.readObject();
+                        mensaje = entrada.readLine();
                         if (primera){
                             primera = false;
-                            clavePublicaServer = RSAySHA.base64ClavePublica(mensaje.getClavePublica());
+                            clavePublicaServer = RSAySHA.base64ClavePublica(mensaje);
+                            //System.out.println(clavePublicaServer);
                             continue;
                         }
-                        if (mensaje == null) {
+                        if (mensaje == null || mensaje.equals("")) {
                             System.out.println("Servidor ha cerrado la conexión.");
                             servidorActivo = false;
                             break;
@@ -66,17 +68,8 @@ public class Cliente2 {
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
-                } catch (ClassNotFoundException e) {
-                    throw new RuntimeException(e);
-                } catch (NoSuchPaddingException e) {
-                    throw new RuntimeException(e);
-                } catch (IllegalBlockSizeException e) {
-                    throw new RuntimeException(e);
-                } catch (NoSuchAlgorithmException e) {
-                    throw new RuntimeException(e);
-                } catch (BadPaddingException e) {
-                    throw new RuntimeException(e);
-                } catch (InvalidKeyException e) {
+                } catch (NoSuchPaddingException | IllegalBlockSizeException | NoSuchAlgorithmException |
+                         BadPaddingException | InvalidKeyException e) {
                     throw new RuntimeException(e);
                 } finally {
                     try {
@@ -90,8 +83,7 @@ public class Cliente2 {
             });
             receptor.start();
 
-            salida.writeObject(new Mensaje(RSAySHA.clavePublicaBase64(clavePublica)));
-            while (clavePublicaServer == null);
+            salida.println(RSAySHA.clavePublicaBase64(clavePublica));
 
             while (true) {
                 System.out.println("Elige una acción:");
@@ -127,7 +119,7 @@ public class Cliente2 {
                         enviarMensaje(topicoMensaje + ":" + contenidoMensaje, salida);
                         break;
                     case 4:
-                        enviarMensaje("DEL:DEL", salida);
+                        enviarMensaje("DEL:", salida);
                         receptor.join();
                         return;
                     default:
