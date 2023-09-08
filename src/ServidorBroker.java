@@ -36,17 +36,8 @@ public class ServidorBroker {
                         servidorActivo = false;
                         try {
                             cerrarServidor();
-                        } catch (NoSuchPaddingException e) {
-                            throw new RuntimeException(e);
-                        } catch (IllegalBlockSizeException e) {
-                            throw new RuntimeException(e);
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        } catch (NoSuchAlgorithmException e) {
-                            throw new RuntimeException(e);
-                        } catch (BadPaddingException e) {
-                            throw new RuntimeException(e);
-                        } catch (InvalidKeyException e) {
+                        } catch (NoSuchPaddingException | IllegalBlockSizeException | NoSuchAlgorithmException |
+                                 BadPaddingException | InvalidKeyException | IOException e) {
                             throw new RuntimeException(e);
                         }
                     }
