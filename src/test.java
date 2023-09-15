@@ -17,14 +17,14 @@ public class test {
 
         String mensaje_ = "ZLATAN";
 
-        String mensajeHasheadoEncriptadoPrivJuan = RSAySHA.encriptarPrivadaRSA(RSAySHA.hashearMensaje(mensaje_), juan.getPrivate());
-        String mensajeEncriptadoPubPepe = RSAySHA.encriptarPublicaRSA(mensaje_, pepe.getPublic());
+        String mensajeHasheadoEncriptadoPrivJuan = RSA_SHA_AES.encriptarPrivadaRSA(RSA_SHA_AES.hashearMensaje(mensaje_), juan.getPrivate());
+        String mensajeEncriptadoPubPepe = RSA_SHA_AES.encriptarPublicaRSA(mensaje_, pepe.getPublic());
 
         Mensaje mensaje = new Mensaje(mensajeHasheadoEncriptadoPrivJuan, mensajeEncriptadoPubPepe);
 
-        String mensajeDesencriptado = RSAySHA.desEncriptarPrivadaRSA(mensaje.getMensajeEncriptado(), pepe.getPrivate());
+        String mensajeDesencriptado = RSA_SHA_AES.desencriptarPrivadaRSA(mensaje.getMensajeEncriptado(), pepe.getPrivate());
 
-        if (RSAySHA.hashearMensaje(mensajeDesencriptado).equals(RSAySHA.desEncriptarPublicaRSA(mensaje.getMensajeHasheadoEncriptado(), juan.getPublic()))){
+        if (RSA_SHA_AES.hashearMensaje(mensajeDesencriptado).equals(RSA_SHA_AES.desencriptarPublicaRSA(mensaje.getMensajeHasheadoEncriptado(), juan.getPublic()))){
             System.out.println(mensaje_);
             System.out.println(mensajeDesencriptado);
         } else{

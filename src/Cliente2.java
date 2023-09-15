@@ -1,6 +1,7 @@
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
 import java.io.*;
 import java.net.Socket;
 import java.security.*;
@@ -13,17 +14,25 @@ public class Cliente2 {
     public static final int PUERTO = 12345;
     public static PrivateKey clavePrivada = null;
     public static PublicKey clavePublica = null;
+    public static SecretKey claveAES = null;
     public static void enviarMensaje(String mensaje, PrintWriter salida) throws NoSuchAlgorithmException, NoSuchPaddingException, IOException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
-        String mensajeHasheadoEncriptado = RSAySHA.encriptarPrivadaRSA(RSAySHA.hashearMensaje(mensaje), clavePrivada);
-        String mensajeEncriptado = RSAySHA.encriptarPublicaRSA(mensaje, clavePublicaServer);
-        salida.println(mensajeHasheadoEncriptado + RSAySHA.delimitadorCodificado + mensajeEncriptado);
+        String mensajeHasheadoEncriptado = RSA_SHA_AES.encriptarPrivadaRSA(RSA_SHA_AES.hashearMensaje(mensaje), clavePrivada);
+        String mensajeEncriptado = RSA_SHA_AES.encriptarAES(mensaje, claveAES);
+        salida.println(mensajeHasheadoEncriptado + RSA_SHA_AES.delimitadorCodificado + mensajeEncriptado);
     }
-    public static String recibirMensaje(String mensaje) throws NoSuchPaddingException, UnsupportedEncodingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
-        String[] partes = mensaje.split(RSAySHA.delimitadorCodificado);
-        String mensajeSTR = RSAySHA.desEncriptarPrivadaRSA(partes[1], clavePrivada);
-        if (RSAySHA.desEncriptarPublicaRSA(partes[0], clavePublicaServer).equals(RSAySHA.hashearMensaje(mensajeSTR)))
+    public static String recibirMensaje(String mensaje) throws NoSuchPaddingException, UnsupportedEncodingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, InvalidAlgorithmParameterException {
+        String[] partes = mensaje.split(RSA_SHA_AES.delimitadorCodificado);
+        String mensajeSTR = RSA_SHA_AES.desencriptarAES(partes[1], claveAES);
+        if (RSA_SHA_AES.desencriptarPublicaRSA(partes[0], clavePublicaServer).equals(RSA_SHA_AES.hashearMensaje(mensajeSTR)))
             return mensajeSTR;
         return "";
+    }
+    public static SecretKey recibirClaveAES(String mensaje) throws NoSuchPaddingException, UnsupportedEncodingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+        String[] partes = mensaje.split(RSA_SHA_AES.delimitadorCodificado);
+        String mensajeSTR = RSA_SHA_AES.desencriptarPrivadaRSA(partes[1], clavePrivada);
+        if (RSA_SHA_AES.desencriptarPublicaRSA(partes[0], clavePublicaServer).equals(RSA_SHA_AES.hashearMensaje(mensajeSTR)))
+            return RSA_SHA_AES.base64SecretKey(mensajeSTR);
+        return null;
     }
     public static void main(String[] args) throws NoSuchAlgorithmException {
 
@@ -45,12 +54,17 @@ public class Cliente2 {
                 try {
                     String mensaje;
                     boolean primera = true;
+                    boolean segunda = true;
                     while (true) {
                         mensaje = entrada.readLine();
                         if (primera){
                             primera = false;
-                            clavePublicaServer = RSAySHA.base64ClavePublica(mensaje);
-                            //System.out.println(clavePublicaServer);
+                            clavePublicaServer = RSA_SHA_AES.base64ClavePublica(mensaje);
+                            continue;
+                        }
+                        if (segunda){
+                            segunda = false;
+                            claveAES = recibirClaveAES(mensaje);
                             continue;
                         }
                         if (mensaje == null || mensaje.equals("")) {
@@ -69,7 +83,7 @@ public class Cliente2 {
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (NoSuchPaddingException | IllegalBlockSizeException | NoSuchAlgorithmException |
-                         BadPaddingException | InvalidKeyException e) {
+                         BadPaddingException | InvalidKeyException | InvalidAlgorithmParameterException e) {
                     throw new RuntimeException(e);
                 } finally {
                     try {
@@ -83,7 +97,7 @@ public class Cliente2 {
             });
             receptor.start();
 
-            salida.println(RSAySHA.clavePublicaBase64(clavePublica));
+            salida.println(RSA_SHA_AES.clavePublicaBase64(clavePublica));
 
             while (true) {
                 System.out.println("Elige una acción:");
@@ -129,8 +143,8 @@ public class Cliente2 {
             }
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (InterruptedException | NoSuchPaddingException | IllegalBlockSizeException | InvalidKeyException |
-                 BadPaddingException e) {
+        } catch (InterruptedException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException |
+                 InvalidKeyException e) {
             throw new RuntimeException(e);
         }
     }
