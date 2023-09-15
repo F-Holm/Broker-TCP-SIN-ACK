@@ -30,6 +30,8 @@ public class Cliente2 {
     public static SecretKey recibirClaveAES(String mensaje) throws NoSuchPaddingException, UnsupportedEncodingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         String[] partes = mensaje.split(RSA_SHA_AES.delimitadorCodificado);
         String mensajeSTR = RSA_SHA_AES.desencriptarPrivadaRSA(partes[1], clavePrivada);
+        //System.out.println(mensajeSTR);
+        //System.out.println(RSA_SHA_AES.desencriptarPublicaRSA(partes[0], clavePublicaServer).equals(RSA_SHA_AES.hashearMensaje(mensajeSTR)));
         if (RSA_SHA_AES.desencriptarPublicaRSA(partes[0], clavePublicaServer).equals(RSA_SHA_AES.hashearMensaje(mensajeSTR)))
             return RSA_SHA_AES.base64SecretKey(mensajeSTR);
         return null;
@@ -53,20 +55,10 @@ public class Cliente2 {
             Thread receptor = new Thread(() -> {
                 try {
                     String mensaje;
-                    boolean primera = true;
-                    boolean segunda = true;
+                    clavePublicaServer = RSA_SHA_AES.base64ClavePublica(entrada.readLine());
+                    claveAES = recibirClaveAES(entrada.readLine());
                     while (true) {
                         mensaje = entrada.readLine();
-                        if (primera){
-                            primera = false;
-                            clavePublicaServer = RSA_SHA_AES.base64ClavePublica(mensaje);
-                            continue;
-                        }
-                        if (segunda){
-                            segunda = false;
-                            claveAES = recibirClaveAES(mensaje);
-                            continue;
-                        }
                         if (mensaje == null || mensaje.equals("")) {
                             System.out.println("Servidor ha cerrado la conexión.");
                             servidorActivo = false;

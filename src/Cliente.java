@@ -53,20 +53,10 @@ public class Cliente {
             Thread receptor = new Thread(() -> {
                 try {
                     String mensaje;
-                    boolean primera = true;
-                    boolean segunda = true;
+                    clavePublicaServer = RSA_SHA_AES.base64ClavePublica(entrada.readLine());
+                    claveAES = recibirClaveAES(entrada.readLine());
                     while (true) {
                         mensaje = entrada.readLine();
-                        if (primera){
-                            primera = false;
-                            clavePublicaServer = RSA_SHA_AES.base64ClavePublica(mensaje);
-                            continue;
-                        }
-                        if (segunda){
-                            segunda = false;
-                            claveAES = recibirClaveAES(mensaje);
-                            continue;
-                        }
                         if (mensaje == null || mensaje.equals("")) {
                             System.out.println("Servidor ha cerrado la conexión.");
                             servidorActivo = false;

@@ -12,6 +12,8 @@ import java.util.Base64;
 public class RSA_SHA_AES {
     public final static String delimitador = "EsteEsUnCaracterDelimitador";
     public final static String delimitadorCodificado = Base64.getEncoder().encodeToString(delimitador.getBytes());
+    public final static String delimitadorAES = "DelimitadorCaracterUnEsEste";
+    public final static String delimitadorCodificadoAES = Base64.getEncoder().encodeToString(delimitadorAES.getBytes());
     public static String encriptarPrivadaRSA(String mensaje, PrivateKey clavePrivada) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException {
         Cipher rsaCipher = Cipher.getInstance("RSA");
         rsaCipher.init(Cipher.ENCRYPT_MODE, clavePrivada);
@@ -64,11 +66,11 @@ public class RSA_SHA_AES {
     public static String encriptarAES(String mensaje, SecretKey clave) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
         cipher.init(Cipher.ENCRYPT_MODE, clave);
-        return Base64.getEncoder().encodeToString(cipher.doFinal(mensaje.getBytes())) + delimitadorCodificado + Base64.getEncoder().encodeToString(cipher.getIV());
+        return Base64.getEncoder().encodeToString(cipher.doFinal(mensaje.getBytes())) + delimitadorCodificadoAES + Base64.getEncoder().encodeToString(cipher.getIV());
     }
 
     public static String desencriptarAES(String mensajeEncriptado, SecretKey clave) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
-        String[] partes = mensajeEncriptado.split(delimitadorCodificado);
+        String[] partes = mensajeEncriptado.split(delimitadorCodificadoAES);
         Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
         cipher.init(Cipher.DECRYPT_MODE, clave, new GCMParameterSpec(128, Base64.getDecoder().decode(partes[1])));
         return new String(cipher.doFinal(Base64.getDecoder().decode(partes[0])));

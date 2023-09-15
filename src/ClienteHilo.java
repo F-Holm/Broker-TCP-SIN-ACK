@@ -39,27 +39,14 @@ public class ClienteHilo extends Thread {
             e.printStackTrace();
         }
     }
-    public String recibirMensaje(String mensaje) throws NoSuchPaddingException, UnsupportedEncodingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, InvalidAlgorithmParameterException {
-        String[] partes = mensaje.split(RSA_SHA_AES.delimitadorCodificado);
-        String mensajeSTR = RSA_SHA_AES.desencriptarAES(partes[1], claveAES);
-        if (RSA_SHA_AES.desencriptarPublicaRSA(partes[0], clavePublica).equals(RSA_SHA_AES.hashearMensaje(mensajeSTR))){
-            return mensajeSTR;
-        }
-        return "";
-    }
     @Override
     public void run() {
         try {
             String mensaje;
-            boolean primero = true;
-            enviarClave();
+            enviarClavePublica();
+            clavePublica = RSA_SHA_AES.base64ClavePublica(entrada.readLine());
+            enviarClaveAES();
             while (hiloActivo && (mensaje = entrada.readLine()) != null) {
-                if (primero){
-                    primero = false;
-                    clavePublica = RSA_SHA_AES.base64ClavePublica(mensaje);
-                    enviarClaveAES();
-                    continue;
-                }
                 if (recibirMensaje(mensaje).equals("")) break;
                 String[] partes = recibirMensaje(mensaje).split(":");
                 switch (partes[0]) {
@@ -95,7 +82,7 @@ public class ClienteHilo extends Thread {
         }
     }
 
-    public void enviarClave() throws IOException {
+    public void enviarClavePublica() throws IOException {
         salida.println(RSA_SHA_AES.clavePublicaBase64(ServidorBroker.clavePublica));
     }
 
@@ -111,5 +98,13 @@ public class ClienteHilo extends Thread {
         String mensajeHasheadoEncriptado = RSA_SHA_AES.encriptarPrivadaRSA(RSA_SHA_AES.hashearMensaje(mensaje), ServidorBroker.clavePrivada);
         String mensajeEncriptado = RSA_SHA_AES.encriptarAES(mensaje, claveAES);
         salida.println(mensajeHasheadoEncriptado + RSA_SHA_AES.delimitadorCodificado + mensajeEncriptado);
+    }
+    public String recibirMensaje(String mensaje) throws NoSuchPaddingException, UnsupportedEncodingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, InvalidAlgorithmParameterException {
+        String[] partes = mensaje.split(RSA_SHA_AES.delimitadorCodificado);
+        String mensajeSTR = RSA_SHA_AES.desencriptarAES(partes[1], claveAES);
+        if (RSA_SHA_AES.desencriptarPublicaRSA(partes[0], clavePublica).equals(RSA_SHA_AES.hashearMensaje(mensajeSTR))){
+            return mensajeSTR;
+        }
+        return "";
     }
 }
