@@ -1,4 +1,4 @@
-package BrokerYClientes;
+package Codigo;
 
 import javax.crypto.*;
 import javax.crypto.spec.GCMParameterSpec;
@@ -8,7 +8,6 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.sql.SQLOutput;
 import java.util.Base64;
 
 public class RSA_SHA_AES {
