@@ -1,4 +1,4 @@
-package Codigo;
+package EncriptacionAsimetricaSimetrica;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;

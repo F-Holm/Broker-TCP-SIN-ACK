@@ -1,6 +1,6 @@
 package Tests;
 
-import Codigo.RSA_SHA_AES;
+import EncriptacionAsimetricaSimetrica.RSA_SHA_AES;
 
 import javax.crypto.*;
 import java.io.*;
