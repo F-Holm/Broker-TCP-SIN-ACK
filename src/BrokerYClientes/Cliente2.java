@@ -1,3 +1,5 @@
+package BrokerYClientes;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
@@ -7,7 +9,7 @@ import java.net.Socket;
 import java.security.*;
 import java.util.Scanner;
 
-public class Cliente {
+public class Cliente2 {
     public static boolean servidorActivo = true;
     public static PublicKey clavePublicaServer = null;
     public static final String SERVIDOR = "127.0.0.1";
@@ -30,6 +32,8 @@ public class Cliente {
     public static SecretKey recibirClaveAES(String mensaje) throws NoSuchPaddingException, UnsupportedEncodingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         String[] partes = mensaje.split(RSA_SHA_AES.delimitadorCodificado);
         String mensajeSTR = RSA_SHA_AES.desencriptarPrivadaRSA(partes[1], clavePrivada);
+        //System.out.println(mensajeSTR);
+        //System.out.println(BrokerYClientes.RSA_SHA_AES.desencriptarPublicaRSA(partes[0], clavePublicaServer).equals(BrokerYClientes.RSA_SHA_AES.hashearMensaje(mensajeSTR)));
         if (RSA_SHA_AES.desencriptarPublicaRSA(partes[0], clavePublicaServer).equals(RSA_SHA_AES.hashearMensaje(mensajeSTR)))
             return RSA_SHA_AES.base64SecretKey(mensajeSTR);
         return null;
@@ -48,7 +52,7 @@ public class Cliente {
             BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             Scanner scanner = new Scanner(System.in);
 
-            System.out.println("Cliente conectado al servidor en " + SERVIDOR + ":" + PUERTO);
+            System.out.println("BrokerYClientes.Cliente conectado al servidor en " + SERVIDOR + ":" + PUERTO);
 
             Thread receptor = new Thread(() -> {
                 try {

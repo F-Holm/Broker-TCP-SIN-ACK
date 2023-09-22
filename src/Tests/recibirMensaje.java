@@ -1,7 +1,8 @@
+package Tests;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.ServerSocket;
 import java.net.Socket;
 public class recibirMensaje {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
@@ -16,7 +17,7 @@ public class recibirMensaje {
         objetoSalida.writeObject(objetoParaEnviar);
 
         Mensaje objetoRecibido = (Mensaje) objetoEntrada.readObject();
-        System.out.println("Mensaje recibido: " + objetoRecibido.getClavePublica());
+        System.out.println("Tests.Mensaje recibido: " + objetoRecibido.getClavePublica());
 
         objetoEntrada.close();
         objetoSalida.close();

@@ -1,3 +1,5 @@
+package Tests;
+
 import javax.crypto.Cipher;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
@@ -30,7 +32,7 @@ public class testRSA {
             System.out.println(mensajeDescifrado);
 
 
-            /*String originalInput = "test input";
+            /*String originalInput = "Tests.test input";
             String encodedString = Base64.getEncoder().encodeToString(originalInput.getBytes());
             byte[] decodedBytes = Base64.getDecoder().decode(encodedString);
             String decodedString = new String(decodedBytes);

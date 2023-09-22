@@ -1,3 +1,5 @@
+package Tests;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -14,7 +16,7 @@ public class enviarMensaje {
         ObjectOutputStream salida = new ObjectOutputStream(socket.getOutputStream());
 
         Mensaje objetoRecibido = (Mensaje) entrada.readObject();
-        System.out.println("Mensaje recibido: " + objetoRecibido.getClavePublica());
+        System.out.println("Tests.Mensaje recibido: " + objetoRecibido.getClavePublica());
 
         Mensaje objetoParaEnviar = new Mensaje("¡Hola, cliente!");
         salida.writeObject(objetoParaEnviar);
